@@ -1,119 +1,108 @@
-# Full-Stack Coding Challenge
+# Task Management Application
 
-**Deadline**: Sunday, Feb 23th 11:59 pm PST
+A TypeScript-based task management application with user authentication and CRUD operations for tasks. Built with React, Node.js, and PostgreSQL.
 
----
+## Features
 
-## Overview
+- User authentication (register/login) with JWT
+- Task management:
+  - Create new tasks
+  - View list of tasks
+  - Update existing tasks
+  - Mark tasks as complete
+  - Delete tasks
+- Secure API endpoints
+- PostgreSQL database for data persistence
 
-Create a “Task Management” application with **React + TypeScript** (frontend), **Node.js** (or **Nest.js**) (backend), and **PostgreSQL** (database). The application should:
+## Prerequisites
 
-1. **Register** (sign up) and **Log in** (sign in) users.
-2. After logging in, allow users to:
-   - **View a list of tasks**.
-   - **Create a new task**.
-   - **Update an existing task** (e.g., mark complete, edit).
-   - **Delete a task**.
+- Node.js (v20 or later)
+- PostgreSQL database
 
-Focus on **correctness**, **functionality**, and **code clarity** rather than visual design.  
-This challenge is intended to be completed within ~3 hours, so keep solutions minimal yet functional.
+## Environment Variables
 
----
+The following environment variables are required:
 
-## Requirements
+```env
+DATABASE_URL=postgresql://username:password@host:port/database
+JWT_SECRET=your-jwt-secret
+```
 
-### 1. Authentication
+## Database Setup
 
-- **User Model**:
-  - `id`: Primary key
-  - `username`: Unique string
-  - `password`: Hashed string
-- **Endpoints**:
-  - `POST /auth/register` – Create a new user
-  - `POST /auth/login` – Login user, return a token (e.g., JWT)
-- **Secure the Tasks Routes**: Only authenticated users can perform task operations.  
-  - **Password Hashing**: Use `bcrypt` or another hashing library to store passwords securely.
-  - **Token Verification**: Verify the token (JWT) on each request to protected routes.
+1. The application uses Drizzle ORM for database management. The schema is defined in `shared/schema.ts`.
 
-### 2. Backend (Node.js or Nest.js)
+2. To set up the database tables, run:
+```bash
+npm run db:push
+```
 
-- **Tasks CRUD**:  
-  - `GET /tasks` – Retrieve a list of tasks (optionally filtered by user).  
-  - `POST /tasks` – Create a new task.  
-  - `PUT /tasks/:id` – Update a task (e.g., mark as complete, edit text).  
-  - `DELETE /tasks/:id` – Delete a task.
-- **Task Model**:
-  - `id`: Primary key
-  - `title`: string
-  - `description`: string (optional)
-  - `isComplete`: boolean (default `false`)
-  - _(Optional)_ `userId` to link tasks to the user who created them
-- **Database**: PostgreSQL
-  - Provide instructions/migrations to set up:
-    - `users` table (with hashed passwords)
-    - `tasks` table
-- **Setup**:
-  - `npm install` to install dependencies
-  - `npm run start` (or `npm run dev`) to run the server
-  - Document any environment variables (e.g., database connection string, JWT secret)
+This command will create/update the following tables:
+- `users` - Stores user information
+- `tasks` - Stores task information
+- `session` - Manages user sessions
 
-### 3. Frontend (React + TypeScript)
+## Running the Application
 
-- **Login / Register**:
-  - Simple forms for **Register** and **Login**.
-  - Store JWT (e.g., in `localStorage`) upon successful login.
-  - If not authenticated, the user should not see the tasks page.
-- **Tasks Page**:
-  - Fetch tasks from `GET /tasks` (including auth token in headers).
-  - Display the list of tasks.
-  - Form to create a new task (`POST /tasks`).
-  - Buttons/fields to update a task (`PUT /tasks/:id`).
-  - Button to delete a task (`DELETE /tasks/:id`).
-- **Navigation**:
-  - Show `Login`/`Register` if not authenticated.
-  - Show `Logout` if authenticated.
-- **Setup**:
-  - `npm install` then `npm start` (or `npm run dev`) to run.
-  - Document how to point the frontend at the backend (e.g., `.env` file, base URL).
+The application uses a single command to run both frontend and backend:
 
----
+```bash
+npm run dev
+```
 
-## Deliverables
+This will start:
+- Backend server on port 5000
+- Frontend development server with hot reloading
+- Database connection
 
-1. **Fork the Public Repository**: **Fork** this repo into your own GitHub account.
-2. **Implement Your Solution** in the forked repository. Make sure you're README file has:
-   - Steps to set up the database (migrations, environment variables).
-   - How to run the backend.
-   - How to run the frontend.
-   - Any relevant notes on testing.
-   - Salary Expectations per month (Mandatory)
-3. **Short Video Demo**: Provide a link (in a `.md` file in your forked repo) to a brief screen recording showing:
-   - Registering a user
-   - Logging in
-   - Creating, updating, and deleting tasks
-4. **Deadline**: Submissions are due **Sunday, Feb 23th 11:59 pm PST**.
+## API Endpoints
 
-> **Note**: Please keep your solution minimal. The entire project is intended to be completed in around 3 hours. Focus on core features (registration, login, tasks CRUD) rather than polished UI or extra features.
+### Authentication
 
----
+- `POST /auth/register` - Register a new user
+  - Body: `{ username: string, password: string }`
+  - Returns: `{ user: User, token: string }`
 
-## Evaluation Criteria
+- `POST /auth/login` - Login user
+  - Body: `{ username: string, password: string }`
+  - Returns: `{ user: User, token: string }`
 
-1. **Functionality**  
-   - Does registration and login work correctly (with password hashing)?
-   - Are tasks protected by authentication?
-   - Does the tasks CRUD flow work end-to-end?
+- `GET /auth/user` - Get current user info
+  - Requires: Authorization header with JWT token
+  - Returns: `User` object
 
-2. **Code Quality**  
-   - Is the code structured logically and typed in TypeScript?
-   - Are variable/function names descriptive?
+### Tasks
 
-3. **Clarity**  
-   - Is the `README.md` (in your fork) clear and detailed about setup steps?
-   - Easy to run and test?
+All task endpoints require authentication via JWT token in the Authorization header.
 
-4. **Maintainability**  
-   - Organized logic (controllers/services, etc.)
-   - Minimal hard-coded values
+- `GET /tasks` - Get all tasks for current user
+- `POST /tasks` - Create a new task
+  - Body: `{ title: string, description?: string }`
+- `PUT /tasks/:id` - Update a task
+  - Body: `{ title?: string, description?: string, isComplete?: boolean }`
+- `DELETE /tasks/:id` - Delete a task
 
-Good luck, and we look forward to your submission!
+## Architecture
+
+- Frontend: React + TypeScript with shadcn/ui components
+- Backend: Express.js + TypeScript
+- Database: PostgreSQL with Drizzle ORM
+- Authentication: JWT tokens
+- State Management: TanStack Query (React Query)
+
+## Development Notes
+
+- The frontend code is in the `client/src` directory
+- Backend code is in the `server` directory
+- Shared types and schemas are in the `shared` directory
+- API requests are automatically authenticated if a valid JWT token exists in localStorage
+- Tasks are automatically filtered by the current user on the backend
+
+## Testing
+
+For testing the API endpoints:
+1. Register a new user through the `/auth/register` endpoint
+2. Use the returned JWT token in the Authorization header for subsequent requests
+3. Test CRUD operations on tasks using the tasks endpoints
+
+The frontend includes built-in error handling and loading states for a better user experience.
