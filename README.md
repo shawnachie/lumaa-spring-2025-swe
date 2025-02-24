@@ -3,7 +3,7 @@
 A TypeScript-based task management application with user authentication and CRUD operations for tasks. Built with React, Node.js, and PostgreSQL.
 
 
-## (Demo Link)[https://www.loom.com/share/9d49a7cd8e0545f7a8afd2c696c43ddc?sid=6ed1065c-91e7-4263-ba8b-47d2589a6a3a]
+## [Demo Link](https://www.loom.com/share/9d49a7cd8e0545f7a8afd2c696c43ddc?sid=6ed1065c-91e7-4263-ba8b-47d2589a6a3a)
 
 ## Features
 
